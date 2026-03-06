@@ -5,28 +5,13 @@ import Quickshell.Io
 import qs.Commons
 import qs.Widgets
 import qs.Services.UI
+import qs.Services.Compositor
 
 ColumnLayout {
     id: root
     spacing: Style.marginL
 
     property var pluginApi: null
-    property bool isHyprland: false
-
-    // Check if running on Hyprland
-    Process {
-        id: hyprlandSettingsChecker
-        running: true
-        command: ["sh", "-c", "command -v hyprctl >/dev/null 2>&1 && [ \"$XDG_CURRENT_DESKTOP\" = \"Hyprland\" ]"]
-
-        onExited: function (exitCode) {
-            root.isHyprland = (exitCode === 0);
-            running = false;
-        }
-
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-    }
 
     property bool editHideInactive: pluginApi?.pluginSettings?.hideInactive ?? pluginApi?.manifest?.metadata?.defaultSettings?.hideInactive ?? false
 
@@ -167,7 +152,7 @@ ColumnLayout {
                         "name": pluginApi.tr("settings.video.sources-screen")
                     }
                 ];
-                if (root.isHyprland) {
+                if (CompositorService.isHyprland) {
                     options.push({
                         "key": "focused-monitor",
                         "name": pluginApi.tr("settings.video.sources-focused-monitor")

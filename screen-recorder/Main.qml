@@ -4,6 +4,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services.UI
 import qs.Services.System
+import qs.Services.Compositor
 
 Item {
     id: root
@@ -15,7 +16,6 @@ Item {
     property bool hasActiveRecording: false
     property string outputPath: ""
     property bool isAvailable: false
-    property bool isHyprland: false
     property string detectedMonitor: ""
     property bool usePrimeRun: false
 
@@ -27,21 +27,6 @@ Item {
 
         onExited: function (exitCode) {
             isAvailable = (exitCode === 0);
-            running = false;
-        }
-
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-    }
-
-    // Check if running on Hyprland
-    Process {
-        id: hyprlandChecker
-        running: true
-        command: ["sh", "-c", "command -v hyprctl >/dev/null 2>&1 && [ \"$XDG_CURRENT_DESKTOP\" = \"Hyprland\" ]"]
-
-        onExited: function (exitCode) {
-            isHyprland = (exitCode === 0);
             running = false;
         }
 
@@ -220,7 +205,7 @@ Item {
 
     function launchRecorder() {
         // If focused-monitor is selected, detect monitor first
-        if (videoSource === "focused-monitor" && isHyprland) {
+        if (videoSource === "focused-monitor" && CompositorService.isHyprland) {
             var script = 'set -euo pipefail\n' + 'pos=$(hyprctl cursorpos)\n' + 'cx=${pos%,*}; cy=${pos#*,}\n' + 'mon=$(hyprctl monitors -j | jq -r --argjson cx "$cx" --argjson cy "$cy" ' + "'.[] | select(($cx>=.x) and ($cx<(.x+.width)) and ($cy>=.y) and ($cy<(.y+.height))) | .name' " + '| head -n1)\n' + '[ -n "${mon:-}" ] || { echo "MONITOR_NOT_FOUND"; exit 1; }\n' + 'use_prime=0\n' + 'for v in /sys/class/drm/card*/device/vendor; do\n' + '  [ -f "$v" ] || continue\n' + '  if grep -qi "0x10de" "$v"; then\n' + '    card="$(basename "$(dirname "$(dirname "$v")")")"\n' + '    [ -e "/sys/class/drm/${card}-${mon}" ] && use_prime=1 && break\n' + '  fi\n' + 'done\n' + 'echo "${mon}:${use_prime}"';
             monitorDetectProcess.exec({
                 "command": ["sh", "-c", script]
