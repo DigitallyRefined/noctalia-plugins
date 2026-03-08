@@ -39,6 +39,24 @@ NIconButton {
             Quickshell.execDetached(args);
         } else if (CompositorService.isNiri) {
             Quickshell.execDetached(["niri", "msg", "action", "screenshot"]);
+        } else if (CompositorService.isSway) {
+            var args = ["grimshot", "copy", "area"];
+
+            if (screenshotMode === "screen" || screenshotMode === "fullscreen") {
+                args = ["grimshot", "copy", "output"];
+            } else if (screenshotMode === "window") {
+                args = ["grimshot", "copy", "window"];
+            }
+
+            var started = Quickshell.execDetached(args);
+            if (!started) {
+                UIService.showNotification({
+                    title: "Screenshot Error",
+                    message: "Failed to run grimshot. Please ensure grimshot is installed and in PATH.",
+                    icon: "alert",
+                    timeout: 3000
+                });
+            }
         } else {
             // Fallback to hyprshot for other compositors
             var args = ["hyprshot", "--freeze", "--clipboard-only", "--mode", screenshotMode, "--silent"];

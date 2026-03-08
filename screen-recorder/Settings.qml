@@ -21,9 +21,27 @@ ColumnLayout {
 
     property string editFilenamePattern: pluginApi?.pluginSettings?.filenamePattern || pluginApi?.manifest?.metadata?.defaultSettings?.filenamePattern || "recording_yyyyMMdd_HHmmss"
 
-    property string editFrameRate: pluginApi?.pluginSettings?.frameRate || pluginApi?.manifest?.metadata?.defaultSettings?.frameRate || "60"
+    // Migrate legacy frame rates to "custom"
+    readonly property var _validFrameRates: ["30", "60", "120", "custom"]
+    readonly property string _rawFrameRate:
+        pluginApi?.pluginSettings?.frameRate ||
+        pluginApi?.manifest?.metadata?.defaultSettings?.frameRate ||
+        "60"
 
-    property string editAudioCodec: pluginApi?.pluginSettings?.audioCodec || pluginApi?.manifest?.metadata?.defaultSettings?.audioCodec || "opus"
+    property string editFrameRate: 
+        _validFrameRates.includes(_rawFrameRate) ? _rawFrameRate : "custom"
+
+    property string editCustomFrameRate: 
+        _validFrameRates.includes(_rawFrameRate)
+            ? (pluginApi?.pluginSettings?.customFrameRate ||
+               pluginApi?.manifest?.metadata?.defaultSettings?.customFrameRate ||
+               "60")
+            : _rawFrameRate
+
+    property string editAudioCodec: 
+        pluginApi?.pluginSettings?.audioCodec || 
+        pluginApi?.manifest?.metadata?.defaultSettings?.audioCodec || 
+        "opus"
 
     property string editVideoCodec: pluginApi?.pluginSettings?.videoCodec || pluginApi?.manifest?.metadata?.defaultSettings?.videoCodec || "h264"
 
@@ -47,20 +65,21 @@ ColumnLayout {
             return;
         }
 
-        pluginApi.pluginSettings.hideInactive = root.editHideInactive;
-        pluginApi.pluginSettings.iconColor = root.editIconColor;
-        pluginApi.pluginSettings.directory = root.editDirectory;
-        pluginApi.pluginSettings.filenamePattern = root.editFilenamePattern;
-        pluginApi.pluginSettings.frameRate = root.editFrameRate;
-        pluginApi.pluginSettings.audioCodec = root.editAudioCodec;
-        pluginApi.pluginSettings.videoCodec = root.editVideoCodec;
-        pluginApi.pluginSettings.quality = root.editQuality;
-        pluginApi.pluginSettings.colorRange = root.editColorRange;
-        pluginApi.pluginSettings.showCursor = root.editShowCursor;
-        pluginApi.pluginSettings.copyToClipboard = root.editCopyToClipboard;
-        pluginApi.pluginSettings.audioSource = root.editAudioSource;
-        pluginApi.pluginSettings.videoSource = root.editVideoSource;
-        pluginApi.pluginSettings.resolution = root.editResolution;
+        pluginApi.pluginSettings.hideInactive = root.editHideInactive
+        pluginApi.pluginSettings.iconColor = root.editIconColor
+        pluginApi.pluginSettings.directory = root.editDirectory
+        pluginApi.pluginSettings.filenamePattern = root.editFilenamePattern
+        pluginApi.pluginSettings.frameRate = root.editFrameRate
+        pluginApi.pluginSettings.customFrameRate = root.editCustomFrameRate
+        pluginApi.pluginSettings.audioCodec = root.editAudioCodec
+        pluginApi.pluginSettings.videoCodec = root.editVideoCodec
+        pluginApi.pluginSettings.quality = root.editQuality
+        pluginApi.pluginSettings.colorRange = root.editColorRange
+        pluginApi.pluginSettings.showCursor = root.editShowCursor
+        pluginApi.pluginSettings.copyToClipboard = root.editCopyToClipboard
+        pluginApi.pluginSettings.audioSource = root.editAudioSource
+        pluginApi.pluginSettings.videoSource = root.editVideoSource
+        pluginApi.pluginSettings.resolution = root.editResolution
 
         pluginApi.saveSettings();
 
@@ -171,22 +190,6 @@ ColumnLayout {
             description: pluginApi.tr("settings.video.frame-rate-desc")
             model: [
                 {
-                    "key": "5",
-                    "name": "5 FPS"
-                },
-                {
-                    "key": "10",
-                    "name": "10 FPS"
-                },
-                {
-                    "key": "15",
-                    "name": "15 FPS"
-                },
-                {
-                    "key": "20",
-                    "name": "20 FPS"
-                },
-                {
                     "key": "30",
                     "name": "30 FPS"
                 },
@@ -195,29 +198,37 @@ ColumnLayout {
                     "name": "60 FPS"
                 },
                 {
-                    "key": "100",
-                    "name": "100 FPS"
-                },
-                {
                     "key": "120",
                     "name": "120 FPS"
                 },
                 {
-                    "key": "144",
-                    "name": "144 FPS"
-                },
-                {
-                    "key": "165",
-                    "name": "165 FPS"
-                },
-                {
-                    "key": "240",
-                    "name": "240 FPS"
+                    "key": "custom",
+                    "name": pluginApi.tr("settings.video.frame-rate-custom")
                 }
             ]
             currentKey: root.editFrameRate
             onSelected: key => root.editFrameRate = key
             defaultValue: pluginApi?.manifest?.metadata?.defaultSettings?.frameRate || "60"
+        }
+
+        // Custom Frame Rate
+        NTextInput {
+            visible: root.editFrameRate === "custom"
+            label: pluginApi.tr("settings.video.custom-frame-rate")
+            description: pluginApi.tr("settings.video.custom-frame-rate-desc")
+            placeholderText: "60"
+            text: root.editCustomFrameRate
+            onTextChanged: {
+                // Only allow numeric values
+                var numeric = text.replace(/[^0-9]/g, '')
+                if (numeric !== text) {
+                    text = numeric
+                }
+                if (numeric) {
+                    root.editCustomFrameRate = numeric
+                }
+            }
+            Layout.fillWidth: true
         }
 
         // Video Quality

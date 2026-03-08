@@ -16,7 +16,6 @@ Item {
     /***************************
     * PROPERTIES
     ***************************/
-    readonly property bool   enabled:          pluginApi?.pluginSettings?.enabled          || false
     readonly property string wallpapersFolder: pluginApi?.pluginSettings?.wallpapersFolder || pluginApi?.manifest?.metadata?.defaultSettings?.wallpapersFolder || ""
 
     readonly property string thumbCacheFolderPath: ImageCacheService.wpThumbDir + "video-wallpaper"
@@ -70,15 +69,22 @@ Item {
             readonly property int screenWidth:  modelData.width
             readonly property int screenHeight: modelData.height
 
-            readonly property string activeBackend:    root.pluginApi?.pluginSettings?.activeBackend || root.pluginApi?.manifest?.metadata?.defaultSettings?.activeBackend || ""
-            readonly property string currentWallpaper: root.pluginApi?.pluginSettings?.[name]?.currentWallpaper || ""
+            readonly property string activeBackend: root.pluginApi?.pluginSettings?.activeBackend || root.pluginApi?.manifest?.metadata?.defaultSettings?.activeBackend || ""
+
+            /***************************
+            * FUNCTIONALITY
+            ***************************/
+            function reloadWallpaperLoader() {
+                wallpaperLoader.active = false;
+                wallpaperLoader.active = true;
+            }
 
 
             /***************************
             * EVENTS
             ***************************/
             onActiveBackendChanged: {
-                wallpaperLoaderTimer.restart();
+                reloadWallpaperLoader();
             }
 
 
@@ -86,20 +92,12 @@ Item {
             * BACKEND COMPONENTS
             ***************************/
             Timer {
-                id: wallpaperLoaderTimer
-                interval: 200
+                id: wallpaperLoaderStartupTimer
+                interval: 500
                 running: true
-                repeat: false
-                triggeredOnStart: false
-
-                onRunningChanged: {
-                    if(running) {
-                        wallpaperLoader.active = false;
-                    }
-                }
 
                 onTriggered: {
-                    wallpaperLoader.active = true;
+                    screenItem.reloadWallpaperLoader();
                 }
             }
 

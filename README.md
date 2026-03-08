@@ -123,6 +123,7 @@ This allows the community to share and use plugins outside the main registry.
 | ThatOneCalculator | [GitHub](https://github.com/ThatOneCalculator/personal-noctalia-plugins) |
 | bennypowers | [GitHub](https://github.com/bennypowers/noctalia-plugins) |
 | rukh-debug | [GitHub](https://github.com/rukh-debug/noctalia-unofficial-plugins) |
+| ajunca | [GitHub](https://github.com/ajunca/noctalia-dropdown-terminal) |
 
 
 ## Development
@@ -131,6 +132,8 @@ This allows the community to share and use plugins outside the main registry.
 # Update registry manually
 node .github/workflows/update-registry.js
 ```
+
+Do NOT commit registry.json in your Pull Requests as it is automatically regenerated.
 
 ## License
 

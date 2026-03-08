@@ -1,7 +1,7 @@
 {
   "id": "github-feed",
   "name": "GitHub Feed",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "minNoctaliaVersion": "3.6.0",
   "author": "linuxmobile",
   "license": "MIT",
@@ -29,7 +29,21 @@
       "showRepoCreations": true,
       "showMyRepoStars": true,
       "showMyRepoForks": true,
-      "openInBrowser": true
+      "showNotificationBadge": true,
+      "colorizationEnabled": false,
+      "colorizationIcon": "Primary",
+      "colorizationBadge": "Primary",
+      "colorizationBadgeText": "Primary",
+      "defaultTab": 0,
+      "openInBrowser": true,
+      "enableSystemNotifications": false,
+      "notifyGitHubNotifications": true,
+      "notifyStars": true,
+      "notifyForks": true,
+      "notifyPRs": true,
+      "notifyRepoCreations": true,
+      "notifyMyRepoStars": true,
+      "notifyMyRepoForks": true
     }
   }
 }

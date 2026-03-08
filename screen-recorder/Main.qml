@@ -61,6 +61,7 @@ Item {
     readonly property string directory: pluginApi?.pluginSettings?.directory || ""
     readonly property string filenamePattern: pluginApi?.pluginSettings?.filenamePattern || "recording_yyyyMMdd_HHmmss"
     readonly property string frameRate: pluginApi?.pluginSettings?.frameRate || "60"
+    readonly property string customFrameRate: pluginApi?.pluginSettings?.customFrameRate || "60"
     readonly property string audioCodec: pluginApi?.pluginSettings?.audioCodec || "opus"
     readonly property string videoCodec: pluginApi?.pluginSettings?.videoCodec || "h264"
     readonly property string quality: pluginApi?.pluginSettings?.quality || "very_high"
@@ -238,8 +239,9 @@ Item {
                 return `-ac ${audioCodec} -a ${audioSource}`;
             })();
 
+        var actualFrameRate = (frameRate === "custom") ? customFrameRate : frameRate;
         var resolutionFlag = (resolution !== "original") ? `-s ${resolution}` : "";
-        var flags = `-w ${source} -f ${frameRate} -k ${videoCodec} ${audioFlags} -q ${quality} -cursor ${showCursor ? "yes" : "no"} -cr ${colorRange} ${resolutionFlag} -o "${outputPath}"`;
+        var flags = `-w ${source} -f ${actualFrameRate} -k ${videoCodec} ${audioFlags} -q ${quality} -cursor ${showCursor ? "yes" : "no"} -cr ${colorRange} ${resolutionFlag} -o "${outputPath}"`;
         var primePrefix = primeRun ? "prime-run " : "";
         var command = `
     _gpuscreenrecorder_flatpak_installed() {

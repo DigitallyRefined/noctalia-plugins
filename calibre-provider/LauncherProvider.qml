@@ -13,9 +13,12 @@ Item {
     property string name: "Calibre"
     property var launcher: null
     property bool handleSearch: false
-    property string supportedLayouts: "both"
     property bool supportsAutoPaste: false
-    property int preferredGridColumns: 3
+
+    property string supportedLayouts: "both"
+    property real preferredGridColumns: 4
+    property real preferredGridCellRatio: 1.5 // Standard eBook ratio size
+    property bool ignoreDensity: false
 
     // Constants
     property int maxResults: 50
@@ -92,16 +95,17 @@ Item {
         try {
             const punct = /[^a-z0-9 ]/gi
             var rawdb = Array.from(JSON.parse(calibreDbLoader.stdout.text));
-            database = []
+            database = {}
             rawdb.forEach((entry) => {
-                    database.push({
+                    database[entry.id] = {
+                        id: entry.id,
                         title: entry.title,
                         description: entry.format + " • " + entry.authors,
                         cover: entry.cover,
                         file: entry.file,
                         authorSearch: FuzzySort.prepare(entry.authors),
                         titleSearch: FuzzySort.prepare(entry.title)
-                    });
+                    };
             });
             loaded = true;
             Logger.i("CalibreProvider", "Finished loading db");
@@ -110,6 +114,9 @@ Item {
         }
 
         loading = false;
+        if (launcher && launcher.activeProvider == root) {
+            launcher.updateResults();
+        }
     }
 
     function onOpened() {
@@ -170,12 +177,17 @@ Item {
         }
 
         var query = searchText.slice(4).trim().toLowerCase();
-        var results = FuzzySort.go(query, database, {
-            limit: maxResults,
-            keys: ["titleSearch", "authorSearch"]
-        }).map(r => formatEntry(r.obj));
+        if(!!query) {
+            return FuzzySort.go(query, Object.values(database), {
+                limit: maxResults,
+                keys: ["titleSearch", "authorSearch"]
+            }).map(r => formatEntry(r.obj));
+        } else {
+            return pluginApi?.pluginSettings?.recentlyOpenedFiles
+            ?.filter(id => id in database)
+            .map(id => formatEntry(database[id])) ?? [];
+        }
 
-        return results;
     }
 
     function formatEntry(entry) {
@@ -214,7 +226,59 @@ Item {
     }
 
     function activateEntry(entry) {
+        updateRecentlyOpened(entry);
         Logger.i("CalibreProvider", "Opening file:", entry.file );
         Quickshell.execDetached([ pluginApi?.pluginSettings?.launcher || "xdg-open", entry.file]);
     }
+
+    function updateRecentlyOpened(entry) {
+
+        if( !pluginApi?.pluginSettings) {
+            Logger.w("CalibreProvider", "PluginSettings not available when updating recently opened.")
+            return;
+        }
+
+        const oldMru = pluginApi.pluginSettings.recentlyOpenedFiles ?? [];
+        if(oldMru.length > 0 && oldMru[0] == entry.id) {
+            // This is already the most recent file, do nothing
+            return;
+        }
+        const newMru = new Array(oldMru.length+1);
+
+        let foundLatestEntry = false;
+        for(let i = 0; i < newMru.length; i++) {
+            // For the first entry, put the one that we just selected
+            if(i == 0) {
+                newMru[i] = entry.id;
+                continue;
+            }
+
+            // If the next entry we would have copied over is the one we just opened,
+            // then skip it
+            if(!foundLatestEntry && oldMru[i-1] == entry.id) {
+                foundLatestEntry = true;
+            }
+
+            if(!foundLatestEntry) {
+                // If we haven't encountered the new file in the old list yet,
+                // copy the next entry from the old list, bumped down a place
+                newMru[i] = oldMru[i-1];
+            } else {
+                // If we've already found and skipped the entry we've just opened,
+                // then just copy the list over, they are in alignment again
+                newMru[i] = oldMru[i];
+            }
+        }
+
+        // The file we opened was already on the list, so we don't need to grow the list
+        if(foundLatestEntry) {
+            newMru.pop();
+        }
+
+        newMru.length = Math.min(newMru.length, pluginApi.pluginSettings.recentlyOpenedMax ?? 36);
+
+        pluginApi.pluginSettings.recentlyOpenedFiles = newMru;
+        pluginApi.saveSettings();
+    }
 }
+
