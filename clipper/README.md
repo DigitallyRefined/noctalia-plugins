@@ -273,6 +273,7 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 - 🎨 Decrease panel Width and Height for a cleaner look
 - 🎨 Added a separator between Note Card and Pinned Itemnhanced visual customization
 - 🎨 Move Panel Close Button to the top right corner instead of being next to Open Plugin Settings
+- 🎨 Added active ring, badge counts for filter buttons
 - 🔧 Remaps keybindings using Alt + 1 to 8 instead of Alt + 0 to 7
 - 🔧 Mouse Wheel Scroll left and right clipboards support
 

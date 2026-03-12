@@ -1,7 +1,7 @@
-# Changelog v2.2.0
+# Changelog v2.2.1
 
 ## Release Date
-**2026-03-11**
+**2026-03-12**
 
 ## Bug Fixes
 
@@ -25,6 +25,7 @@
 #### UI Enhancement
 - Panel will now attach to bar instead of being separate
 - Decrease abit of panel's width and height for a cleaner look
+- Added active ring, badge counts for filter buttons
 
 #### Keybind Changes
 - Pressing `Alt+1` will now navigate you back to `All` instead of `Alt+0`, `Alt+2` is `Text` and goes on
