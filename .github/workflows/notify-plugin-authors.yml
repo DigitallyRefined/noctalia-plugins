@@ -1,7 +1,7 @@
 name: Auto-assign Plugin Reviewers
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    types: [opened]
 permissions:
   contents: read
   pull-requests: write
@@ -26,16 +26,6 @@ jobs:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           REPO: ${{ github.repository }}
         run: |
-          # Check if the bot has already commented on this PR
-          existing_comment=$(gh pr view $PR_NUMBER --json comments \
-            --jq '.comments[] | select(.author.login == "github-actions[bot]") | select(.body | contains("this PR modifies your plugin")) | .id' \
-            | head -n 1)
-          
-          if [[ -n "$existing_comment" ]]; then
-            echo "Bot has already notified authors on this PR, skipping."
-            exit 0
-          fi
-
           # Get the list of changed files in this PR
           changed_files=$(gh pr view $PR_NUMBER --json files --jq '.files[].path')
           
