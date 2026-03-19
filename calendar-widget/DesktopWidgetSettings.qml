@@ -16,7 +16,7 @@ Item {
         spacing: Style.marginM
 
         NText {
-            text: "Calendar Preferences"
+            text: pluginApi?.tr("menu.title")
             font.bold: true
             font.pointSize: Style.fontSizeM
             color: Color.mPrimary
@@ -26,7 +26,7 @@ Item {
             Layout.fillWidth: true
             
             NText { 
-                text: "Week starts on "
+                text: pluginApi?.tr("menu.settings")
                 Layout.fillWidth: true
                 color: Color.mOnSurface
             }
