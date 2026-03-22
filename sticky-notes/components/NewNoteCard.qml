@@ -23,30 +23,22 @@ Rectangle {
   Behavior on border.color { ColorAnimation { duration: 150 } }
 
   // Save button (top-right)
-  Rectangle {
+  NIconButton {
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.margins: Style.marginXS
-    width: 28 * Style.uiScaleRatio
-    height: 28 * Style.uiScaleRatio
-    radius: Style.radiusS
-    color: saveBtnArea.containsMouse ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(0, 0, 0, 0.06)
+    icon: "check"
+    baseSize: 28
+    customRadius: Style.radiusS
+    colorBg: Qt.rgba(0, 0, 0, 0.06)
+    colorBgHover: Qt.rgba(0, 0, 0, 0.12)
+    colorFg: "#37474F"
+    colorFgHover: "#37474F"
+    colorBorder: "transparent"
+    colorBorderHover: "transparent"
     z: 20
 
-    NIcon {
-      anchors.centerIn: parent
-      icon: "check"
-      pointSize: Style.fontSizeS
-      color: "#37474F"
-    }
-
-    MouseArea {
-      id: saveBtnArea
-      anchors.fill: parent
-      hoverEnabled: true
-      cursorShape: Qt.PointingHandCursor
-      onClicked: newNoteCard.saveClicked(textArea.text, newNoteCard.noteColor)
-    }
+    onClicked: newNoteCard.saveClicked(textArea.text, newNoteCard.noteColor)
   }
 
   ColumnLayout {

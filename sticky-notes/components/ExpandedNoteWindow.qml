@@ -71,54 +71,38 @@ Item {
 
         Item { Layout.fillWidth: true }
 
-        Rectangle {
-          width: 34 * Style.uiScaleRatio
-          height: 34 * Style.uiScaleRatio
-          radius: width / 2
-          color: modeArea.containsMouse ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(0, 0, 0, 0.06)
+        NIconButton {
+          icon: root.editing ? "check" : "pencil"
+          baseSize: 34
+          customRadius: 100
+          colorBg: Qt.rgba(0, 0, 0, 0.06)
+          colorBgHover: Qt.rgba(0, 0, 0, 0.12)
+          colorFg: "#37474F"
+          colorFgHover: "#37474F"
+          colorBorder: "transparent"
+          colorBorderHover: "transparent"
 
-          NIcon {
-            anchors.centerIn: parent
-            icon: root.editing ? "check" : "pencil"
-            pointSize: Style.fontSizeM
-            color: "#37474F"
-          }
-
-          MouseArea {
-            id: modeArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-              if (root.editing) {
-                root.saveCurrent();
-              } else {
-                root.beginEdit();
-              }
+          onClicked: {
+            if (root.editing) {
+              root.saveCurrent();
+            } else {
+              root.beginEdit();
             }
           }
         }
 
-        Rectangle {
-          width: 34 * Style.uiScaleRatio
-          height: 34 * Style.uiScaleRatio
-          radius: width / 2
-          color: closeArea.containsMouse ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(0, 0, 0, 0.06)
+        NIconButton {
+          icon: "arrow-down-right"
+          baseSize: 34
+          customRadius: 100
+          colorBg: Qt.rgba(0, 0, 0, 0.06)
+          colorBgHover: Qt.rgba(0, 0, 0, 0.12)
+          colorFg: "#37474F"
+          colorFgHover: "#37474F"
+          colorBorder: "transparent"
+          colorBorderHover: "transparent"
 
-          NIcon {
-            anchors.centerIn: parent
-            icon: "arrow-down-right"
-            pointSize: Style.fontSizeM
-            color: "#37474F"
-          }
-
-          MouseArea {
-            id: closeArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.closePanel()
-          }
+          onClicked: root.closePanel()
         }
       }
 

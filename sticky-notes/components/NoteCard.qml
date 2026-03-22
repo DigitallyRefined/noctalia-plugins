@@ -161,106 +161,74 @@ Rectangle {
           enabled: cardHover.hovered
           Behavior on opacity { NumberAnimation { duration: 120 } }
 
-          Rectangle {
-            width: 28 * Style.uiScaleRatio
-            height: 28 * Style.uiScaleRatio
-            radius: width / 2
-            color: expandBtnArea.containsMouse ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(0, 0, 0, 0.06)
+          NIconButton {
+            icon: "arrow-up-left"
+            baseSize: 28
+            customRadius: 100
+            colorBg: Qt.rgba(0, 0, 0, 0.06)
+            colorBgHover: Qt.rgba(0, 0, 0, 0.12)
+            colorFg: "#37474F"
+            colorFgHover: "#37474F"
+            colorBorder: "transparent"
+            colorBorderHover: "transparent"
 
-            NIcon {
-              anchors.centerIn: parent
-              icon: "arrow-up-left"
-              pointSize: Style.fontSizeS
-              color: "#37474F"
-            }
-
-            MouseArea {
-              id: expandBtnArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: noteCard.expandClicked()
-            }
+            onClicked: noteCard.expandClicked()
           }
 
-          Rectangle {
-            width: 28 * Style.uiScaleRatio
-            height: 28 * Style.uiScaleRatio
-            radius: width / 2
-            color: copyBtnArea.containsMouse ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(0, 0, 0, 0.06)
+          NIconButton {
+            id: copyBtn
+            icon: "copy"
+            baseSize: 28
+            customRadius: 100
+            colorBg: Qt.rgba(0, 0, 0, 0.06)
+            colorBgHover: Qt.rgba(0, 0, 0, 0.12)
+            colorFg: "#37474F"
+            colorFgHover: "#37474F"
+            colorBorder: "transparent"
+            colorBorderHover: "transparent"
 
-            NIcon {
-              id: copyIcon
-              anchors.centerIn: parent
-              icon: "copy"
-              pointSize: Style.fontSizeS
-              color: "#37474F"
-            }
-
-            MouseArea {
-              id: copyBtnArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: {
-                hiddenCopyHelper.selectAll();
-                hiddenCopyHelper.copy();
-                hiddenCopyHelper.deselect();
-                copyIcon.icon = "copy-check"
-                resetCopyIconTimer.start();
-                ToastService.showNotice(noteCard.pluginApi?.tr("notes.copied") || "Copied to clipboard");
-              }
+            onClicked: {
+              hiddenCopyHelper.selectAll();
+              hiddenCopyHelper.copy();
+              hiddenCopyHelper.deselect();
+              copyBtn.icon = "copy-check";
+              resetCopyIconTimer.start();
+              ToastService.showNotice(noteCard.pluginApi?.tr("notes.copied") || "Copied to clipboard");
             }
 
             Timer {
               id: resetCopyIconTimer
               interval: 1500
-              onTriggered: copyIcon.icon = "copy"
+              onTriggered: copyBtn.icon = "copy"
             }
           }
 
-          Rectangle {
-            width: 28 * Style.uiScaleRatio
-            height: 28 * Style.uiScaleRatio
-            radius: width / 2
-            color: editBtnArea.containsMouse ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(0, 0, 0, 0.06)
+          NIconButton {
+            icon: "pencil"
+            baseSize: 28
+            customRadius: 100
+            colorBg: Qt.rgba(0, 0, 0, 0.06)
+            colorBgHover: Qt.rgba(0, 0, 0, 0.12)
+            colorFg: "#37474F"
+            colorFgHover: "#37474F"
+            colorBorder: "transparent"
+            colorBorderHover: "transparent"
 
-            NIcon {
-              anchors.centerIn: parent
-              icon: "pencil"
-              pointSize: Style.fontSizeS
-              color: "#37474F"
-            }
-
-            MouseArea {
-              id: editBtnArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: noteCard.editClicked()
-            }
+            onClicked: noteCard.editClicked()
           }
 
-          Rectangle {
-            width: 28 * Style.uiScaleRatio
-            height: 28 * Style.uiScaleRatio
-            radius: width / 2
-            color: deleteBtnArea.containsMouse ? Qt.rgba(0.8, 0, 0, 0.15) : Qt.rgba(0, 0, 0, 0.06)
+          NIconButton {
+            icon: "trash"
+            baseSize: 28
+            customRadius: 100
+            colorBg: Qt.rgba(0, 0, 0, 0.06)
+            colorBgHover: Qt.rgba(0.8, 0, 0, 0.15)
+            colorFg: "#C62828"
+            colorFgHover: "#C62828"
+            colorBorder: "transparent"
+            colorBorderHover: "transparent"
 
-            NIcon {
-              anchors.centerIn: parent
-              icon: "trash"
-              pointSize: Style.fontSizeS
-              color: "#C62828"
-            }
-
-            MouseArea {
-              id: deleteBtnArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: noteCard.confirmingDelete = true
-            }
+            onClicked: noteCard.confirmingDelete = true
           }
         }
       }
@@ -290,50 +258,34 @@ Rectangle {
         Layout.alignment: Qt.AlignHCenter
         spacing: Style.marginM
 
-        Rectangle {
+        NButton {
           width: 64 * Style.uiScaleRatio
           height: 30 * Style.uiScaleRatio
-          radius: Style.radiusS
-          color: cancelArea.containsMouse ? Qt.rgba(1,1,1,0.3) : Qt.rgba(1,1,1,0.15)
+          buttonRadius: Style.radiusS
+          backgroundColor: Qt.rgba(1, 1, 1, 0.15)
+          hoverColor: Qt.rgba(1, 1, 1, 0.3)
+          textColor: "white"
+          textHoverColor: "white"
+          text: noteCard.pluginApi?.tr("notes.cancel") || "Cancel"
+          fontSize: Style.fontSizeS * Style.uiScaleRatio
 
-          NText {
-            anchors.centerIn: parent
-            text: noteCard.pluginApi?.tr("notes.cancel") || "Cancel"
-            color: "white"
-            font.pointSize: Style.fontSizeS * Style.uiScaleRatio
-          }
-
-          MouseArea {
-            id: cancelArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: noteCard.confirmingDelete = false
-          }
+          onClicked: noteCard.confirmingDelete = false
         }
 
-        Rectangle {
+        NButton {
           width: 64 * Style.uiScaleRatio
           height: 30 * Style.uiScaleRatio
-          radius: Style.radiusS
-          color: confirmArea.containsMouse ? "#E53935" : "#C62828"
+          buttonRadius: Style.radiusS
+          backgroundColor: "#C62828"
+          hoverColor: "#E53935"
+          textColor: "white"
+          textHoverColor: "white"
+          text: noteCard.pluginApi?.tr("editor.delete") || "Delete"
+          fontSize: Style.fontSizeS * Style.uiScaleRatio
 
-          NText {
-            anchors.centerIn: parent
-            text: noteCard.pluginApi?.tr("editor.delete") || "Delete"
-            color: "white"
-            font.pointSize: Style.fontSizeS * Style.uiScaleRatio
-          }
-
-          MouseArea {
-            id: confirmArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-              noteCard.confirmingDelete = false;
-              noteCard.deleteClicked();
-            }
+          onClicked: {
+            noteCard.confirmingDelete = false;
+            noteCard.deleteClicked();
           }
         }
       }
@@ -346,30 +298,22 @@ Rectangle {
     visible: noteCard.isEditing
 
     // Save button (top-right)
-    Rectangle {
+    NIconButton {
       anchors.top: parent.top
       anchors.right: parent.right
       anchors.margins: Style.marginXS
-      width: 28 * Style.uiScaleRatio
-      height: 28 * Style.uiScaleRatio
-      radius: Style.radiusS
-      color: saveBtnArea.containsMouse ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(0, 0, 0, 0.06)
+      icon: "check"
+      baseSize: 28
+      customRadius: Style.radiusS
+      colorBg: Qt.rgba(0, 0, 0, 0.06)
+      colorBgHover: Qt.rgba(0, 0, 0, 0.12)
+      colorFg: "#37474F"
+      colorFgHover: "#37474F"
+      colorBorder: "transparent"
+      colorBorderHover: "transparent"
       z: 20
 
-      NIcon {
-        anchors.centerIn: parent
-        icon: "check"
-        pointSize: Style.fontSizeS
-        color: "#37474F"
-      }
-
-      MouseArea {
-        id: saveBtnArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: noteCard.saveClicked(editTextArea.text, noteCard.noteColor)
-      }
+      onClicked: noteCard.saveClicked(editTextArea.text, noteCard.noteColor)
     }
 
     ColumnLayout {
