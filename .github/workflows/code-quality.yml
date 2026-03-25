@@ -1,6 +1,6 @@
 name: Automatic Code Quality Review
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - synchronize
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Fixed: v6 does not exist
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
@@ -33,7 +33,7 @@ jobs:
             awk '/^diff --git.*\.qml /{found=1} /^diff --git/{if(!/\.qml /) found=0} found{print}' |
             grep -vE "^(index|\+\+\+|-)") || echo "No qml file changed"
 
-          if [ -z "$diff_changes" ] || [ "$diff_changes" = "" ]; then
+          if [ -z "$diff_changes" ]; then
             echo "No diff changes found!"
             echo "The base ref checking: $BASE_REF"
             echo "The head ref checking: $HEAD_REF"
@@ -58,11 +58,11 @@ jobs:
 
           while IFS= read -r line; do
             if echo "$line" | grep -E "^diff --git" >/dev/null; then
-              file_title=$(echo "$line" | sed 's/diff --git a\/\(.*\.qml\) .*/\1/g') || echo "Failed to get the file title! Line: $line"
+              file_title=$(echo "$line" | sed 's/diff --git a\/\(.*\.qml\) .*/\1/g')
               comment_body+=$(printf -- '\n## File: %s' "$file_title")
               echo "Checking file: $file_title"
             elif echo "$line" | grep -E "^@@" >/dev/null; then
-              line_index=$(echo "$line" | grep -oE "\+[0-9]+" | grep -oE "[0-9]+") || echo "Failed to get line_index! Line: $line"
+              line_index=$(echo "$line" | grep -oE "\+[0-9]+" | grep -oE "[0-9]+")
               echo "Current line index reset: $line_index"
             else
               if echo "$line" | grep -E "(border(\.width)*|spacing|pointSize|radius|margin(s)*): [0-9]+" >/dev/null; then
