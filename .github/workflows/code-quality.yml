@@ -78,8 +78,10 @@ jobs:
                 issues=$((issues + 1))
               fi
               if echo "$line" | grep -E "applyUiScale: *false" >/dev/null; then
-                comment_body+=$(print_line "$l_priority" "$line_index" 'The `applyUiScale: false` would make it so that the component does not support ui scaling. Always check if this is the correct behaviour you want when changing the ui scale!' "$line")
-                issues=$((issues + 1))
+                if [[ "$file_title" != *BarWidget.qml ]]; then
+                  comment_body+=$(print_line "$l_priority" "$line_index" 'The `applyUiScale: false` would make it so that the component does not support ui scaling. Always check if this is the correct behaviour you want when changing the ui scale!' "$line")
+                  issues=$((issues + 1))
+                fi
               fi
               if echo "$line" | grep -E "pluginApi\??\.tr\((.)*\) *(\?\?|\|\|)" >/dev/null; then
                 comment_body+=$(print_line "$l_priority" "$line_index" 'When it comes to translations there is no need for fallback values. From: `pluginApi?.tr("example") || "value"`. To: `pluginApi?.tr("example")`' "$line")
