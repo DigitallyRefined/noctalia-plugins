@@ -144,7 +144,7 @@ Rectangle {
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.minimumWidth: 150
+                    Layout.minimumWidth: 100
 
                     TextInput {
                         id: titleInput
@@ -186,6 +186,29 @@ Rectangle {
                         }
                     }
                 }
+                
+                NIconButton {
+                    icon: note && note.isPrivate ? "eye-off" : "eye"
+                    tooltipText: pluginApi?.tr("notecards.toggle-privacy-mode") || "Toggle privacy mode"
+                    colorFg: {
+                        const noteColor = note ? note.color : "yellow";
+                        const scheme = colorSchemes[noteColor];
+                        return scheme ? scheme.fg : "#000000";
+                    }
+                    colorBg: "transparent"
+                    colorBgHover: Qt.rgba(0, 0, 0, 0.1)
+                    colorBorder: "transparent"
+                    colorBorderHover: "transparent"
+
+                    onClicked: {
+                        if (root.pluginApi && root.pluginApi.mainInstance) {
+                            root.pluginApi.mainInstance.updateNoteCard(root.note.id, {
+                                isPrivate: !(root.note && root.note.isPrivate)
+                            });
+                        }
+                    }
+                }
+
                 NIconButton {
                     icon: "palette"
                     tooltipText: pluginApi?.tr("notecards.change-color") || "Change Color"
@@ -301,6 +324,9 @@ Rectangle {
                     wrapMode: TextArea.Wrap
                     selectByMouse: true
                     color: {
+                        if (note.isPrivate && !textArea.activeFocus) {
+                            return "transparent"
+                        }
                         const noteColor = note ? note.color : "yellow";
                         const scheme = colorSchemes[noteColor];
                         return scheme ? scheme.fg : "#000000";
@@ -322,6 +348,25 @@ Rectangle {
                         if (note) {
                             note.content = text;
                         }
+                    }
+                }
+            }
+
+            Rectangle {
+                enabled: false
+                opacity: 1.0
+                visible: note.isPrivate && !textArea.activeFocus
+                anchors.fill: parent
+                color: root.color
+
+                NIcon {
+                    anchors.centerIn: parent
+                    icon: "password"
+                    pointSize: 45
+                    color: {
+                        const noteColor = note ? note.color : "yellow";
+                        const scheme = colorSchemes[noteColor];
+                        return scheme ? scheme.fg : "#000000";
                     }
                 }
             }
