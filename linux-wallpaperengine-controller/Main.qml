@@ -28,7 +28,7 @@ Item {
     Logger.i("LWEController", "Main initialized");
   }
 
-  function ensureSettingsRoot(): void {
+  function ensureSettingsRoot() {
     if (!pluginApi) {
       return;
     }
@@ -46,11 +46,11 @@ Item {
     }
   }
 
-  function cloneValue(value: var): var {
+  function cloneValue(value) {
     return JSON.parse(JSON.stringify(value || ({})));
   }
 
-  function hasAnyScreenPathFrom(sourceScreens: var): bool {
+  function hasAnyScreenPathFrom(sourceScreens) {
     const screens = sourceScreens || ({});
     const keys = Object.keys(screens);
     for (const key of keys) {
@@ -63,7 +63,7 @@ Item {
     return false;
   }
 
-  function markRuntimeRecoveryPending(value: bool, flushToDisk: bool = true): void {
+  function markRuntimeRecoveryPending(value, flushToDisk = true) {
     if (!pluginApi) {
       return;
     }
@@ -80,7 +80,7 @@ Item {
     }
   }
 
-  function saveCurrentLayoutAsLastKnownGood(reason: string): bool {
+  function saveCurrentLayoutAsLastKnownGood(reason) {
     if (!pluginApi) {
       return false;
     }
@@ -101,7 +101,7 @@ Item {
     return true;
   }
 
-  function restoreLastKnownGoodLayout(reason: string): bool {
+  function restoreLastKnownGoodLayout(reason) {
     if (!pluginApi) {
       return false;
     }
@@ -122,7 +122,7 @@ Item {
     return true;
   }
 
-  function tryAutoRecoverFromRuntimeError(reason: string): bool {
+  function tryAutoRecoverFromRuntimeError(reason) {
     if (!pluginApi || recoveryInProgress) {
       return false;
     }
@@ -141,7 +141,7 @@ Item {
     return true;
   }
 
-  function recoverPendingLayoutOnStartup(): bool {
+  function recoverPendingLayoutOnStartup() {
     if (!pluginApi) {
       return false;
     }
@@ -184,11 +184,11 @@ Item {
   readonly property string assetsDir: cfg.assetsDir ?? defaults.assetsDir ?? ""
   readonly property bool shouldRunWorkshopScan: defaultAutoDetectWorkshop && normalizedPath(cfg.wallpapersFolder ?? defaults.wallpapersFolder ?? "").length === 0
 
-  function normalizedPath(path: var): string {
+  function normalizedPath(path) {
     return Settings.preprocessPath(String(path || ""));
   }
 
-  function getScreenConfig(screenName: string): var {
+  function getScreenConfig(screenName) {
     const screenConfigs = cfg.screens || ({});
     const raw = screenConfigs[screenName] || ({});
 
@@ -205,7 +205,7 @@ Item {
     };
   }
 
-  function hasAnyConfiguredWallpaper(): bool {
+  function hasAnyConfiguredWallpaper() {
     for (const screen of Quickshell.screens) {
       const screenCfg = getScreenConfig(screen.name);
       if (screenCfg.path && screenCfg.path.length > 0) {
@@ -215,11 +215,11 @@ Item {
     return false;
   }
 
-  function setScreenWallpaper(screenName: string, path: string): void {
+  function setScreenWallpaper(screenName, path) {
     setScreenWallpaperWithOptions(screenName, path, ({}));
   }
 
-  function setScreenWallpaperWithOptions(screenName: string, path: string, options: var): void {
+  function setScreenWallpaperWithOptions(screenName, path, options) {
     if (!pluginApi) {
       return;
     }
@@ -267,7 +267,7 @@ Item {
     restartEngine();
   }
 
-  function clearScreenWallpaper(screenName: string): void {
+  function clearScreenWallpaper(screenName) {
     if (!pluginApi) {
       return;
     }
@@ -286,11 +286,11 @@ Item {
     restartEngine();
   }
 
-  function setAllScreensWallpaper(path: string): void {
+  function setAllScreensWallpaper(path) {
     setAllScreensWallpaperWithOptions(path, ({}));
   }
 
-  function setAllScreensWallpaperWithOptions(path: string, options: var): void {
+  function setAllScreensWallpaperWithOptions(path, options) {
     if (!pluginApi || !path || path.length === 0) {
       return;
     }
@@ -338,7 +338,7 @@ Item {
     restartEngine();
   }
 
-  function extractRuntimeError(stderrText: string): string {
+  function extractRuntimeError(stderrText) {
     const text = (stderrText || "").trim();
     if (text.length === 0) {
       return "";
@@ -383,7 +383,7 @@ Item {
     return summary;
   }
 
-  function setRuntimeErrorFromStderr(stderrText: string): bool {
+  function setRuntimeErrorFromStderr(stderrText) {
     const raw = (stderrText || "").trim();
     if (raw.length === 0) {
       return false;
@@ -399,7 +399,7 @@ Item {
     return true;
   }
 
-  function markErrorAsRecovered(): void {
+  function markErrorAsRecovered() {
     const hintRaw = pluginApi?.tr("main.error.autoRecovered");
     if (hintRaw === undefined || hintRaw === null) {
       return;
@@ -418,7 +418,7 @@ Item {
     lastError = current + " (" + hint + ")";
   }
 
-  function buildCommand(): list<var> {
+  function buildCommand() {
     const command = ["linux-wallpaperengine"];
     let firstPath = "";
     let runtimeOptions = {
@@ -506,7 +506,7 @@ Item {
     return command;
   }
 
-  function stopAll(): void {
+  function stopAll() {
     Logger.i("LWEController", "Stopping engine process");
     pendingCommand = [];
 
@@ -519,7 +519,7 @@ Item {
     statusMessage = pluginApi?.tr("main.status.stopped");
   }
 
-  function startEngineWithCommand(command: list<var>): void {
+  function startEngineWithCommand(command) {
     if (!engineAvailable) {
       Logger.w("LWEController", "Skip start: engine unavailable");
       return;
@@ -545,7 +545,7 @@ Item {
     stableRunTimer.restart();
   }
 
-  function restartEngine(): void {
+  function restartEngine() {
     if (!engineAvailable) {
       Logger.w("LWEController", "Skip restart: engine unavailable");
       return;
@@ -575,7 +575,7 @@ Item {
     startEngineWithCommand(command);
   }
 
-  function reload(): void {
+  function reload() {
     if (!hasAnyConfiguredWallpaper()) {
       lastError = "";
       lastErrorDetails = "";
@@ -709,7 +709,7 @@ Item {
   IpcHandler {
     target: "plugin:linux-wallpaperengine-controller"
 
-    function toggle(): void {
+    function toggle() {
       if (root.pluginApi) {
         root.pluginApi.withCurrentScreen(screen => {
           root.pluginApi.togglePanel(screen);
@@ -717,7 +717,7 @@ Item {
       }
     }
 
-    function apply(screenName: string, bgPath: string): void {
+    function apply(screenName, bgPath) {
       if (!screenName || !bgPath) {
         Logger.w("LWEController", "IPC apply ignored due to invalid args", screenName, bgPath);
         return;
@@ -728,7 +728,7 @@ Item {
       root.setScreenWallpaper(screenName, bgPath);
     }
 
-    function stop(screenName: string): void {
+    function stop(screenName) {
       if (!screenName || screenName === "all") {
         Logger.i("LWEController", "IPC stop all");
         root.stopAll();
@@ -740,7 +740,7 @@ Item {
       root.clearScreenWallpaper(screenName);
     }
 
-    function reload(): void {
+    function reload() {
       root.reload();
     }
   }

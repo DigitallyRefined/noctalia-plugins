@@ -472,7 +472,7 @@ Item {
               Item { Layout.fillWidth: true }
 
               NIconButton {
-                enabled: mainInstance?.engineAvailable
+                enabled: mainInstance?.engineAvailable ?? false
                 icon: "refresh"
                 tooltipText: pluginApi?.tr("panel.reload")
                 onClicked: {
@@ -486,14 +486,14 @@ Item {
               }
 
               NIconButton {
-                enabled: mainInstance?.engineAvailable
+                enabled: mainInstance?.engineAvailable ?? false
                 icon: "player-stop"
                 tooltipText: pluginApi?.tr("panel.stop")
                 onClicked: mainInstance?.stopAll()
               }
 
               NIconButton {
-                enabled: mainInstance?.engineAvailable
+                enabled: mainInstance?.engineAvailable ?? false
                 icon: "device-desktop"
                 tooltipText: root.applyAllDisplays
                   ? pluginApi?.tr("panel.switchToPerDisplay")
@@ -536,7 +536,7 @@ Item {
                 NButton {
                   required property var modelData
                   Layout.fillWidth: true
-                  enabled: mainInstance?.engineAvailable
+                  enabled: mainInstance?.engineAvailable ?? false
                   icon: root.selectedScreenName === modelData.key ? "check" : "device-desktop"
                   text: modelData.name
                   onClicked: root.selectedScreenName = modelData.key
@@ -728,7 +728,7 @@ Item {
 
             NText {
               Layout.fillWidth: true
-              text: mainInstance?.lastError
+              text: mainInstance?.lastError ?? ""
               color: Color.mOnSurface
               wrapMode: Text.WordWrap
               maximumLineCount: 2
@@ -736,7 +736,7 @@ Item {
             }
 
             Rectangle {
-              visible: root.errorDetailsExpanded && mainInstance?.lastErrorDetails && mainInstance.lastErrorDetails.length > 0
+              visible: root.errorDetailsExpanded && (mainInstance?.lastErrorDetails ?? "").length > 0
               Layout.fillWidth: true
               Layout.preferredHeight: 136 * Style.uiScaleRatio
               radius: Style.radiusS
@@ -752,7 +752,7 @@ Item {
 
                 NText {
                   width: parent.width
-                  text: mainInstance?.lastErrorDetails
+                  text: mainInstance?.lastErrorDetails ?? ""
                   color: Color.mOnSurface
                   wrapMode: Text.WrapAnywhere
                 }
@@ -919,7 +919,7 @@ Item {
                   MouseArea {
                     id: tileMouse
                     anchors.fill: parent
-                    enabled: mainInstance?.engineAvailable
+                    enabled: mainInstance?.engineAvailable ?? false
                     hoverEnabled: true
                     onClicked: root.applyPath(modelData.path)
                   }
@@ -1164,7 +1164,7 @@ Item {
                       Layout.fillWidth: true
                       text: pluginApi?.tr("panel.confirmApply")
                       icon: "check"
-                      enabled: mainInstance?.engineAvailable && root.pendingPath.length > 0
+                      enabled: (mainInstance?.engineAvailable ?? false) && root.pendingPath.length > 0
                       onClicked: root.applyPendingSelection()
                     }
 
@@ -1189,7 +1189,7 @@ Item {
         }
 
         NText {
-          visible: !mainInstance?.engineAvailable
+          visible: !(mainInstance?.engineAvailable ?? false)
           text: pluginApi?.tr("panel.installHint")
           color: Color.mOnSurfaceVariant
           wrapMode: Text.Wrap
