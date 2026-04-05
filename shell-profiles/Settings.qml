@@ -45,8 +45,8 @@ ColumnLayout {
 
   NTextInput {
     Layout.fillWidth: true
-    label: pluginApi?.tr("settings.dir-label") || "Profiles directory"
-    description: pluginApi?.tr("settings.dir-description") || "Where profiles are stored on disk"
+    label: pluginApi?.tr("settings.dir-label")
+    description: pluginApi?.tr("settings.dir-description")
     placeholderText: Settings.configDir + "profiles/"
     text: root.editProfilesDir
     onTextChanged: root.editProfilesDir = text
@@ -64,8 +64,8 @@ ColumnLayout {
     spacing: Style.marginM
 
     NLabel {
-      label: pluginApi?.tr("settings.icon-label") || "Widget icon"
-      description: pluginApi?.tr("settings.icon-description") || "Icon shown in the bar"
+      label: pluginApi?.tr("settings.icon-label")
+      description: pluginApi?.tr("settings.icon-description")
     }
 
     NIcon {
@@ -92,7 +92,7 @@ ColumnLayout {
   }
 
   NColorChoice {
-    label: pluginApi?.tr("settings.icon-color-label") || "Icon color"
+    label: pluginApi?.tr("settings.icon-color-label")
     currentKey: root.editIconColor
     onSelected: key => {
       root.editIconColor = key
@@ -110,8 +110,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: pluginApi?.tr("settings.wallpapers-label") || "Include wallpapers by default"
-    description: pluginApi?.tr("settings.wallpapers-description") || "Apply wallpaper settings when loading a profile"
+    label: pluginApi?.tr("settings.wallpapers-label")
+    description: pluginApi?.tr("settings.wallpapers-description")
     checked: root.editIncludeWallpapers
     onToggled: checked => {
       root.editIncludeWallpapers = checked
@@ -129,8 +129,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: pluginApi?.tr("settings.backup-label") || "Auto-backup before applying"
-    description: pluginApi?.tr("settings.backup-description") || "Save current config to _backups/ before each profile apply"
+    label: pluginApi?.tr("settings.backup-label")
+    description: pluginApi?.tr("settings.backup-description")
     checked: root.editBackupEnabled
     onToggled: checked => {
       root.editBackupEnabled = checked
@@ -140,8 +140,8 @@ ColumnLayout {
 
   NValueSlider {
     Layout.fillWidth: true
-    label: pluginApi?.tr("settings.backup-count-label") || "Maximum backups to keep"
-    description: pluginApi?.tr("settings.backup-count-description") || "Oldest entries are deleted automatically (1–20)"
+    label: pluginApi?.tr("settings.backup-count-label")
+    description: pluginApi?.tr("settings.backup-count-description")
     from: 1
     to: 20
     stepSize: 1

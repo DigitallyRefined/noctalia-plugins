@@ -113,7 +113,7 @@ Item {
     acceptedButtons: Qt.LeftButton | Qt.RightButton
 
     onEntered: {
-      TooltipService.show(root, pluginApi?.tr("widget.tooltip") || "Profiles", BarService.getTooltipDirection())
+      TooltipService.show(root, pluginApi?.tr("widget.tooltip"), BarService.getTooltipDirection())
     }
     onExited: {
       TooltipService.hide()

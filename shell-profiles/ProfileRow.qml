@@ -37,7 +37,7 @@ NBox {
     anchors.bottom: parent.bottom
     anchors.leftMargin: -Style.borderS
     width: 3
-    radius: 2
+    radius: Style.radiusXS
     color: Color.mPrimary
     visible: root.isActive
 
@@ -51,17 +51,17 @@ NBox {
     parent: Overlay.overlay
     model: [
       {
-        "label": pluginApi?.tr("panel.action-overwrite") || "Overwrite",
+        "label": pluginApi?.tr("panel.action-overwrite"),
         "action": "overwrite",
         "icon": "edit"
       },
       {
-        "label": pluginApi?.tr("panel.action-rename") || "Rename",
+        "label": pluginApi?.tr("panel.action-rename"),
         "action": "rename",
         "icon": "pencil"
       },
       {
-        "label": pluginApi?.tr("panel.action-delete") || "Delete",
+        "label": pluginApi?.tr("panel.action-delete"),
         "action": "delete",
         "icon": "trash"
       }
@@ -109,12 +109,12 @@ NBox {
       }
 
       NLabel {
-        label: pluginApi?.tr("panel.delete-confirm-title") || "Delete profile?"
+        label: pluginApi?.tr("panel.delete-confirm-title")
         Layout.alignment: Qt.AlignHCenter
       }
 
       NText {
-        text: (pluginApi?.tr("panel.delete-confirm-message") || 'Delete "{name}"? This cannot be undone.').replace("{name}", root.profileName)
+        text: (pluginApi?.tr("panel.delete-confirm-message")).replace("{name}", root.profileName)
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
         wrapMode: Text.WordWrap
@@ -135,7 +135,7 @@ NBox {
         }
 
         NButton {
-          text: pluginApi?.tr("panel.action-delete") || "Delete"
+          text: pluginApi?.tr("panel.action-delete")
           backgroundColor: Color.mError
           textColor: Color.mOnError
           Layout.fillWidth: true
@@ -170,20 +170,18 @@ NBox {
       spacing: Style.marginM
 
       NLabel {
-        label: pluginApi?.tr("panel.rename-title") || "Rename profile"
+        label: pluginApi?.tr("panel.rename-title")
       }
 
       NTextInput {
         id: renameInput
         Layout.fillWidth: true
-        label: ""
-        placeholderText: pluginApi?.tr("panel.rename-placeholder") || "New name…"
+        placeholderText: pluginApi?.tr("panel.rename-placeholder")
         Keys.onReturnPressed: renameApplyBtn.clicked()
       }
 
       NText {
         id: renameError
-        text: ""
         visible: text !== ""
         color: Color.mError
         pointSize: Style.fontSizeS
@@ -212,7 +210,7 @@ NBox {
             var err = service?.validateName(newName) || ""
             if (err) { renameError.text = err; return }
             if (service?.profileExists(newName)) {
-              renameError.text = pluginApi?.tr("error.name-exists") || "Name already exists"
+              renameError.text = pluginApi?.tr("error.name-exists")
               return
             }
             service?.renameProfile(root.profileName, newName, function(ok, msg) {
@@ -233,7 +231,7 @@ NBox {
     anchors.verticalCenter: parent.verticalCenter
     anchors.rightMargin: Style.marginM
     icon: "dots-vertical"
-    tooltipText: pluginApi?.tr("panel.more-actions") || "More actions"
+    tooltipText: pluginApi?.tr("panel.more-actions")
     baseSize: Math.round(Style.fontSizeXXL * Style.uiScaleRatio)
     colorBg: "transparent"
     colorFg: Color.mOnSurfaceVariant
@@ -246,7 +244,7 @@ NBox {
     anchors.verticalCenter: parent.verticalCenter
     anchors.rightMargin: Style.marginXS
     icon: "photo"
-    tooltipText: pluginApi?.tr("panel.include-wallpapers") || "Wallpapers"
+    tooltipText: pluginApi?.tr("panel.include-wallpapers")
     baseSize: Math.round(Style.fontSizeXXL * Style.uiScaleRatio)
     colorBg: "transparent"
     colorFg: root.includeWallpapers ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -258,7 +256,7 @@ NBox {
     anchors.right: wallpaperToggle.left
     anchors.verticalCenter: parent.verticalCenter
     anchors.rightMargin: Style.marginS
-    text: pluginApi?.tr("panel.action-apply") || "Apply"
+    text: pluginApi?.tr("panel.action-apply")
     icon: "download"
     enabled: !(service?.isBusy ?? false)
     onClicked: {

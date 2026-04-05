@@ -60,7 +60,7 @@ Item {
           }
 
           NLabel {
-            label: pluginApi?.tr("panel.title") || "Profiles"
+            label: pluginApi?.tr("panel.title")
             Layout.fillWidth: true
           }
 
@@ -98,8 +98,7 @@ Item {
           NTextInput {
             id: saveInput
             Layout.fillWidth: true
-            label: ""
-            placeholderText: pluginApi?.tr("panel.save-placeholder") || "Profile name…"
+            placeholderText: pluginApi?.tr("panel.save-placeholder")
             Keys.onReturnPressed: {
               if (saveBtn.enabled) saveBtn.clicked()
             }
@@ -107,7 +106,7 @@ Item {
 
           NButton {
             id: saveBtn
-            text: pluginApi?.tr("panel.save-button") || "Save"
+            text: pluginApi?.tr("panel.save-button")
             icon: "bookmark-plus"
             enabled: saveInput.text.trim() !== "" && !(service?.isBusy ?? false)
             onClicked: {
@@ -129,7 +128,6 @@ Item {
 
       NText {
         id: saveError
-        text: ""
         visible: text !== ""
         color: Color.mError
         pointSize: Style.fontSizeS
@@ -141,8 +139,7 @@ Item {
       // ── Search filter ─────────────────────────────────────────────────────────
       NTextInput {
         Layout.fillWidth: true
-        label: ""
-        placeholderText: pluginApi?.tr("panel.search-placeholder") || "Search profiles…"
+        placeholderText: pluginApi?.tr("panel.search-placeholder")
         inputIconName: "search"
         visible: (service?.profiles?.length ?? 0) > 0
         onTextChanged: root.searchQuery = text
@@ -176,13 +173,13 @@ Item {
 
               NIcon {
                 icon: "bookmark-off"
-                pointSize: 48
+                pointSize: Style.fontSizeXXL * 2
                 color: Color.mOnSurfaceVariant
                 Layout.alignment: Qt.AlignHCenter
               }
 
               NText {
-                text: pluginApi?.tr("panel.empty") || "No profiles yet."
+                text: pluginApi?.tr("panel.empty")
                 pointSize: Style.fontSizeM
                 color: Color.mOnSurfaceVariant
                 horizontalAlignment: Text.AlignHCenter

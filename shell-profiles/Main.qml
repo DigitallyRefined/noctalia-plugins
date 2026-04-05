@@ -51,12 +51,12 @@ Item {
 
   function validateName(name) {
     if (!name || name.trim() === "")
-      return pluginApi?.tr("error.name-empty") || "Name cannot be empty"
+      return pluginApi?.tr("error.name-empty")
     var t = name.trim()
     if (t.length > 64)
-      return pluginApi?.tr("error.name-too-long") || "Name is too long"
+      return pluginApi?.tr("error.name-too-long")
     if (/[\/\\.:<>"|?*\x00-\x1f]/.test(t))
-      return pluginApi?.tr("error.name-invalid") || "Name contains invalid characters"
+      return pluginApi?.tr("error.name-invalid")
     return ""
   }
 
@@ -263,9 +263,9 @@ Item {
     _runCommand(copyCmd, function(code, stdout, stderr) {
       if (code !== 0) {
         root.isBusy = false
-        var msg = stderr.trim() || pluginApi?.tr("error.save-failed") || "Failed to save profile"
+        var msg = stderr.trim() || pluginApi?.tr("error.save-failed")
         Logger.e("ShellProfiles", "Save failed:", msg)
-        ToastService.showError(pluginApi?.tr("panel.title") || "Profiles", msg)
+        ToastService.showError(pluginApi?.tr("panel.title"), msg)
         if (callback) callback(false, msg)
         return
       }
@@ -274,9 +274,9 @@ Item {
                    dirPath + "/wallpapers.json", wallpapersJson], function(wCode, wStdout, wStderr) {
         if (wCode !== 0) {
           root.isBusy = false
-          var wmsg = wStderr.trim() || pluginApi?.tr("error.save-failed") || "Failed to save profile"
+          var wmsg = wStderr.trim() || pluginApi?.tr("error.save-failed")
           Logger.e("ShellProfiles", "Save failed (wallpapers):", wmsg)
-          ToastService.showError(pluginApi?.tr("panel.title") || "Profiles", wmsg)
+          ToastService.showError(pluginApi?.tr("panel.title"), wmsg)
           if (callback) callback(false, wmsg)
           return
         }
@@ -287,8 +287,8 @@ Item {
           Logger.i("ShellProfiles", "Saved profile:", trimmed)
           root.listProfiles()
           ToastService.showNotice(
-            pluginApi?.tr("panel.title") || "Profiles",
-            pluginApi?.tr("toast.saved", { "name": trimmed }) || ('Profile "' + trimmed + '" saved'),
+            pluginApi?.tr("panel.title"),
+            pluginApi?.tr("toast.saved", { "name": trimmed }),
             _pluginIcon()
           )
           if (callback) callback(true, "")
@@ -325,15 +325,15 @@ Item {
           }
           Logger.i("ShellProfiles", "Applied profile:", trimmed)
           ToastService.showNotice(
-            pluginApi?.tr("panel.title") || "Profiles",
-            pluginApi?.tr("toast.applied", { "name": trimmed }) || ('Profile "' + trimmed + '" applied'),
+            pluginApi?.tr("panel.title"),
+            pluginApi?.tr("toast.applied", { "name": trimmed }),
             _pluginIcon()
           )
           if (callback) callback(true, "")
         } else {
-          var msg = stderr.trim() || pluginApi?.tr("error.apply-failed") || "Failed to apply profile"
+          var msg = stderr.trim() || pluginApi?.tr("error.apply-failed")
           Logger.e("ShellProfiles", "Apply failed:", msg)
-          ToastService.showError(pluginApi?.tr("panel.title") || "Profiles", msg)
+          ToastService.showError(pluginApi?.tr("panel.title"), msg)
           if (callback) callback(false, msg)
         }
       })
@@ -397,15 +397,15 @@ Item {
         Logger.i("ShellProfiles", "Deleted profile:", trimmed)
         root.listProfiles()
         ToastService.showNotice(
-          pluginApi?.tr("panel.title") || "Profiles",
-          pluginApi?.tr("toast.deleted", { "name": trimmed }) || ('Profile "' + trimmed + '" deleted'),
+          pluginApi?.tr("panel.title"),
+          pluginApi?.tr("toast.deleted", { "name": trimmed }),
           _pluginIcon()
         )
         if (callback) callback(true, "")
       } else {
-        var msg = stderr.trim() || pluginApi?.tr("error.delete-failed") || "Failed to delete profile"
+        var msg = stderr.trim() || pluginApi?.tr("error.delete-failed")
         Logger.e("ShellProfiles", "Delete failed:", msg)
-        ToastService.showError(pluginApi?.tr("panel.title") || "Profiles", msg)
+        ToastService.showError(pluginApi?.tr("panel.title"), msg)
         if (callback) callback(false, msg)
       }
     })
@@ -435,9 +435,9 @@ Item {
         root.listProfiles()
         if (callback) callback(true, "")
       } else {
-        var msg = stderr.trim() || pluginApi?.tr("error.rename-failed") || "Failed to rename profile"
+        var msg = stderr.trim() || pluginApi?.tr("error.rename-failed")
         Logger.e("ShellProfiles", "Rename failed:", msg)
-        ToastService.showError(pluginApi?.tr("panel.title") || "Profiles", msg)
+        ToastService.showError(pluginApi?.tr("panel.title"), msg)
         if (callback) callback(false, msg)
       }
     })
