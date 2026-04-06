@@ -30,6 +30,9 @@
   },
   "panel": {
     "title": "Linux-WallpaperEngine 設定",
+    "sectionInfo": "情報",
+    "sectionAudio": "オーディオとディスプレイ",
+    "sectionFeatures": "機能",
     "installHint": "インストール例: yay -S linux-wallpaperengine-git",
     "errorBannerTitle": "ランタイムエラーを検出",
     "errorShowDetails": "詳細を表示",
@@ -108,10 +111,11 @@
       "audioTitle": "音声",
       "displayTitle": "表示"
     },
-    "wallpapersFolder": {
+"wallpapersFolder": {
       "label": "壁紙ソースディレクトリ",
-      "description": "壁紙プロジェクトフォルダーを含むディレクトリ",
-      "placeholder": "~/.local/share/Steam/steamapps/workshop/content/431960"
+      "description": "壁纸プロジェクトフォルダーを含むディレクトリ",
+      "placeholder": "~/.local/share/Steam/steamapps/workshop/content/431960",
+      "scan": "Steam ワークショップディレクトリを自動検出"
     },
     "assetsDir": {
       "label": "Wallpaper Engine 資産ディレクトリ",

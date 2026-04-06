@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Io
 
 import qs.Commons
 import qs.Widgets
@@ -23,8 +24,8 @@ ColumnLayout {
   property bool editDefaultDisableParallax: cfg.defaultDisableParallax ?? defaults.defaultDisableParallax ?? false
   property bool editDefaultNoFullscreenPause: cfg.defaultNoFullscreenPause ?? defaults.defaultNoFullscreenPause ?? false
   property bool editDefaultFullscreenPauseOnlyActive: cfg.defaultFullscreenPauseOnlyActive ?? defaults.defaultFullscreenPauseOnlyActive ?? false
-  property bool editAutoDetectWorkshop: cfg.autoDetectWorkshop ?? defaults.autoDetectWorkshop ?? true
   property bool editAutoApplyOnStartup: cfg.autoApplyOnStartup ?? defaults.autoApplyOnStartup ?? true
+  property bool scanning: false
 
   spacing: Style.marginL
 
@@ -84,13 +85,28 @@ ColumnLayout {
     font.weight: Font.Bold
   }
 
-  NTextInput {
+  RowLayout {
     Layout.fillWidth: true
-    label: pluginApi?.tr("settings.wallpapersFolder.label")
-    description: pluginApi?.tr("settings.wallpapersFolder.description")
-    placeholderText: pluginApi?.tr("settings.wallpapersFolder.placeholder")
-    text: root.editWallpapersFolder
-    onTextChanged: root.editWallpapersFolder = text
+
+    NTextInput {
+      Layout.fillWidth: true
+      label: pluginApi?.tr("settings.wallpapersFolder.label")
+      description: pluginApi?.tr("settings.wallpapersFolder.description")
+      placeholderText: pluginApi?.tr("settings.wallpapersFolder.placeholder")
+      text: root.editWallpapersFolder
+      onTextChanged: root.editWallpapersFolder = text
+    }
+
+    NIconButton {
+      Layout.alignment: Qt.AlignBottom
+      icon: root.scanning ? "loader" : "search"
+      tooltipText: pluginApi?.tr("settings.wallpapersFolder.scan")
+      enabled: !root.scanning
+      onClicked: {
+        root.scanning = true;
+        scanProcess.running = true;
+      }
+    }
   }
 
   NTextInput {
@@ -100,14 +116,6 @@ ColumnLayout {
     placeholderText: pluginApi?.tr("settings.assetsDir.placeholder")
     text: root.editAssetsDir
     onTextChanged: root.editAssetsDir = text
-  }
-
-  NToggle {
-    Layout.fillWidth: true
-    label: pluginApi?.tr("settings.autoDetectWorkshop.label")
-    description: pluginApi?.tr("settings.autoDetectWorkshop.description")
-    checked: root.editAutoDetectWorkshop
-    onToggled: checked => root.editAutoDetectWorkshop = checked
   }
 
   NText {
@@ -199,15 +207,34 @@ ColumnLayout {
     pluginApi.pluginSettings.defaultDisableParallax = root.editDefaultDisableParallax;
     pluginApi.pluginSettings.defaultNoFullscreenPause = root.editDefaultNoFullscreenPause;
     pluginApi.pluginSettings.defaultFullscreenPauseOnlyActive = root.editDefaultFullscreenPauseOnlyActive;
-    pluginApi.pluginSettings.autoDetectWorkshop = root.editAutoDetectWorkshop;
     pluginApi.pluginSettings.autoApplyOnStartup = root.editAutoApplyOnStartup;
 
     pluginApi.saveSettings();
-    Logger.d("LWEController", "Settings saved", "wallpapersFolder=", root.editWallpapersFolder, "assetsDir=", root.editAssetsDir, "defaultScaling=", root.editDefaultScaling, "defaultFps=", root.editDefaultFps, "defaultVolume=", root.editDefaultVolume, "defaultMuted=", root.editDefaultMuted, "defaultAudioReactiveEffects=", root.editDefaultAudioReactiveEffects, "defaultDisableMouse=", root.editDefaultDisableMouse, "defaultDisableParallax=", root.editDefaultDisableParallax, "defaultNoFullscreenPause=", root.editDefaultNoFullscreenPause, "defaultFullscreenPauseOnlyActive=", root.editDefaultFullscreenPauseOnlyActive, "autoDetectWorkshop=", root.editAutoDetectWorkshop, "autoApplyOnStartup=", root.editAutoApplyOnStartup);
+    Logger.d("LWEController", "Settings saved", "wallpapersFolder=", root.editWallpapersFolder, "assetsDir=", root.editAssetsDir, "defaultScaling=", root.editDefaultScaling, "defaultFps=", root.editDefaultFps, "defaultVolume=", root.editDefaultVolume, "defaultMuted=", root.editDefaultMuted, "defaultAudioReactiveEffects=", root.editDefaultAudioReactiveEffects, "defaultDisableMouse=", root.editDefaultDisableMouse, "defaultDisableParallax=", root.editDefaultDisableParallax, "defaultNoFullscreenPause=", root.editDefaultNoFullscreenPause, "defaultFullscreenPauseOnlyActive=", root.editDefaultFullscreenPauseOnlyActive, "autoApplyOnStartup=", root.editAutoApplyOnStartup);
 
     if (pluginApi.mainInstance && pluginApi.mainInstance.engineAvailable) {
       Logger.d("LWEController", "Triggering engine reload after settings save");
       pluginApi.mainInstance.reload();
     }
+  }
+
+  Process {
+    id: scanProcess
+    running: false
+    command: [
+      "sh", "-c",
+      "for common in \"$HOME/.steam/steam/steamapps/common\" \"$HOME/.local/share/Steam/steamapps/common\" \"$HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common\" \"$HOME/snap/steam/common/.local/share/Steam/steamapps/common\"; do if [ -d \"$common\" ]; then workshop=\"${common%/common}/workshop/content/431960\"; if [ -d \"$workshop\" ]; then printf '%s\\n' \"$workshop\"; exit 0; fi; fi; done; exit 0"
+    ]
+
+    onExited: function () {
+      root.scanning = false;
+      const detected = String(stdout.text || "").trim();
+      if (detected.length > 0 && root.editWallpapersFolder.length === 0) {
+        root.editWallpapersFolder = detected;
+      }
+    }
+
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
   }
 }

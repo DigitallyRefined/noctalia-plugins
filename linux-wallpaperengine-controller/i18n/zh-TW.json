@@ -30,6 +30,9 @@
   },
   "panel": {
     "title": "Linux-WallpaperEngine 設定",
+    "sectionInfo": "資訊",
+    "sectionAudio": "音訊與顯示",
+    "sectionFeatures": "功能",
     "installHint": "安裝範例：yay -S linux-wallpaperengine-git",
     "errorBannerTitle": "偵測到執行期錯誤",
     "errorShowDetails": "查看詳情",
@@ -109,9 +112,10 @@
       "displayTitle": "顯示"
     },
     "wallpapersFolder": {
-      "label": "壁紙來源目錄",
-      "description": "包含壁紙專案資料夾的目錄",
-      "placeholder": "~/.local/share/Steam/steamapps/workshop/content/431960"
+      "label": "壁纸源目錄",
+      "description": "包含壁纸项目资料夹的目錄",
+      "placeholder": "~/.local/share/Steam/steamapps/workshop/content/431960",
+      "scan": "自动检测 Steam 工作坊目錄"
     },
     "assetsDir": {
       "label": "Wallpaper Engine 資源目錄",

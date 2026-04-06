@@ -30,6 +30,9 @@
   },
   "panel": {
     "title": "Linux-WallpaperEngine Settings",
+    "sectionInfo": "Information",
+    "sectionAudio": "Audio & Display",
+    "sectionFeatures": "Features",
     "installHint": "Install example: yay -S linux-wallpaperengine-git",
     "errorBannerTitle": "Runtime error detected",
     "errorShowDetails": "View details",
@@ -111,7 +114,8 @@
     "wallpapersFolder": {
       "label": "Wallpaper source directory",
       "description": "Directory containing wallpaper project folders",
-      "placeholder": "~/.local/share/Steam/steamapps/workshop/content/431960"
+      "placeholder": "~/.local/share/Steam/steamapps/workshop/content/431960",
+      "scan": "Auto-detect Steam workshop directory"
     },
     "assetsDir": {
       "label": "Wallpaper Engine assets directory",

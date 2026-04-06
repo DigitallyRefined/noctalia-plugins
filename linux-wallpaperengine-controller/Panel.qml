@@ -44,7 +44,9 @@ Item {
   property string selectedType: "all"
   property string sortMode: "name"
   property bool sortAscending: true
-  property bool applyAllDisplays: false
+  readonly property bool singleScreenMode: Quickshell.screens.length <= 1
+  property bool applyAllDisplays: !singleScreenMode && root._applyAllDisplays
+  property bool _applyAllDisplays: false
   property bool filterDropdownOpen: false
   property bool sortDropdownOpen: false
   property bool errorDetailsExpanded: false
@@ -214,6 +216,11 @@ Item {
   }
 
   function syncSelectionOptionsFromScreen() {
+    if (root.singleScreenMode) {
+      resetPendingToGlobalDefaults();
+      return;
+    }
+
     const screenCfg = mainInstance?.getScreenConfig(selectedScreenName);
     if (!screenCfg) {
       resetPendingToGlobalDefaults();
@@ -249,13 +256,14 @@ Item {
       return;
     }
 
-    if (selectedScreenName.length === 0) {
+    if (!root.singleScreenMode && selectedScreenName.length === 0) {
       Logger.w("LWEController", "Confirm apply skipped due to empty selected screen", path);
       return;
     }
 
-    Logger.i("LWEController", "Confirm apply to screen", selectedScreenName, path, JSON.stringify(options));
-    mainInstance?.setScreenWallpaperWithOptions(selectedScreenName, path, options);
+    const targetScreen = root.singleScreenMode ? (Quickshell.screens[0]?.name || "") : selectedScreenName;
+    Logger.i("LWEController", "Confirm apply to screen", targetScreen, path, JSON.stringify(options));
+    mainInstance?.setScreenWallpaperWithOptions(targetScreen, path, options);
     pendingPath = "";
   }
 
@@ -367,7 +375,7 @@ Item {
 
     screenModel = model;
 
-    if (selectedScreenName.length === 0 && model.length > 0) {
+    if (!root.singleScreenMode && selectedScreenName.length === 0 && model.length > 0) {
       selectedScreenName = model[0].key;
     }
   }
@@ -439,7 +447,7 @@ Item {
 
         Rectangle {
           Layout.fillWidth: true
-          Layout.preferredHeight: root.applyAllDisplays
+          Layout.preferredHeight: (root.applyAllDisplays || root.singleScreenMode)
             ? (56 * Style.uiScaleRatio + 56 * Style.uiScaleRatio + Style.marginS * 4)
             : (56 * Style.uiScaleRatio + 52 * Style.uiScaleRatio + 56 * Style.uiScaleRatio + Style.marginS * 5)
           Layout.minimumHeight: Layout.preferredHeight
@@ -493,12 +501,12 @@ Item {
               }
 
               NIconButton {
-                enabled: mainInstance?.engineAvailable ?? false
+                enabled: (mainInstance?.engineAvailable ?? false) && !root.singleScreenMode
                 icon: "device-desktop"
                 tooltipText: root.applyAllDisplays
                   ? pluginApi?.tr("panel.switchToPerDisplay")
                   : pluginApi?.tr("panel.switchToAllDisplays")
-                onClicked: root.applyAllDisplays = !root.applyAllDisplays
+                onClicked: root._applyAllDisplays = !root._applyAllDisplays
               }
 
               NIconButton {
@@ -528,7 +536,7 @@ Item {
             RowLayout {
               Layout.fillWidth: true
               Layout.preferredHeight: 52 * Style.uiScaleRatio
-              visible: !root.applyAllDisplays
+              visible: !root.applyAllDisplays && !root.singleScreenMode
 
               Repeater {
                 model: root.screenModel
@@ -1029,6 +1037,13 @@ Item {
                       color: Qt.alpha(Color.mOutline, 0.25)
                     }
 
+                    NText {
+                      text: pluginApi?.tr("panel.sectionInfo")
+                      color: Color.mOnSurface
+                      font.weight: Font.Bold
+                      font.pointSize: Style.fontSizeM
+                    }
+
                     RowLayout {
                     Layout.fillWidth: true
 
@@ -1098,6 +1113,19 @@ Item {
                     }
                     }
 
+                    Rectangle {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 1
+                      color: Qt.alpha(Color.mOutline, 0.25)
+                    }
+
+                    NText {
+                      text: pluginApi?.tr("panel.sectionAudio")
+                      color: Color.mOnSurface
+                      font.weight: Font.Bold
+                      font.pointSize: Style.fontSizeM
+                    }
+
                     NComboBox {
                     Layout.fillWidth: true
                     label: pluginApi?.tr("panel.wallpaperScaling")
@@ -1129,6 +1157,19 @@ Item {
                     onToggled: checked => root.selectedMuted = checked
                     }
 
+                    Rectangle {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 1
+                      color: Qt.alpha(Color.mOutline, 0.25)
+                    }
+
+                    NText {
+                      text: pluginApi?.tr("panel.sectionFeatures")
+                      color: Color.mOnSurface
+                      font.weight: Font.Bold
+                      font.pointSize: Style.fontSizeM
+                    }
+
                     NToggle {
                     Layout.fillWidth: true
                     label: pluginApi?.tr("panel.wallpaperAudioReactive")
@@ -1157,22 +1198,12 @@ Item {
                     wrapMode: Text.Wrap
                     }
 
-                    RowLayout {
-                    Layout.fillWidth: true
-
                     NButton {
                       Layout.fillWidth: true
                       text: pluginApi?.tr("panel.confirmApply")
                       icon: "check"
                       enabled: (mainInstance?.engineAvailable ?? false) && root.pendingPath.length > 0
                       onClicked: root.applyPendingSelection()
-                    }
-
-                    NButton {
-                      text: pluginApi?.tr("panel.cancelSelection")
-                      icon: "x"
-                      onClicked: root.pendingPath = ""
-                    }
                     }
 
                     NButton {
